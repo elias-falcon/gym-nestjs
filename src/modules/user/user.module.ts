@@ -6,9 +6,10 @@ import { StateUserEntityRepository } from '../state-user-entity/state-user-entit
 import { UserController } from './user.controller';
 import { SharedModule } from '../../shared/shared.module';
 import { MapperService } from 'src/shared/mapper.service';
+import { RoleRepository } from '../role/role.repository';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([UserRepository]), TypeOrmModule.forFeature([StateUserEntityRepository]), SharedModule],
+    imports: [TypeOrmModule.forFeature([UserRepository]), TypeOrmModule.forFeature([StateUserEntityRepository]),  TypeOrmModule.forFeature([RoleRepository]), SharedModule],
     providers: [UserService, MapperService],
     controllers: [UserController]
 
