@@ -5,7 +5,6 @@ import { UserDto } from './dto/user.dto';
 import { StateUserEntityRepository } from '../state-user-entity/state-user-entity.respository';
 import { StateUserEntity } from '../state-user-entity/state-user-entity.entity';
 import { User } from './user.entity';
-import { MapperService } from '../../shared/mapper.service';
 import { RoleRepository } from '../role/role.repository';
 
 @Injectable()
@@ -17,10 +16,9 @@ export class UserService {
         private readonly _stateUserEntityRepository: StateUserEntityRepository,
         @InjectRepository(RoleRepository)
         private readonly _roleRepository: RoleRepository,
-        private readonly _mapperService: MapperService,
     ){}
 
-    async get(id: number): Promise<UserDto>{
+    async get(id: number): Promise<User>{
         if(!id){
             throw new BadRequestException('id must be sent')
         }
@@ -34,21 +32,21 @@ export class UserService {
             throw new NotFoundException();
         }
 
-        return this._mapperService.map<User,UserDto> (user, new UserDto());
+        return user;
     }
 
-    async getAll(): Promise<UserDto[]>{
+    async getAll(): Promise<User[]>{
         const stateUserActive: StateUserEntity = await this._stateUserEntityRepository.findOne({where: { nameStateUser: 'ACTIVE' }});
 
         const users: User[] = await this._userRepository.find({
             where: { stateUser: stateUserActive }});
 
-        return this._mapperService.mapCollection<User,UserDto> (users, new UserDto());
+        return users;
     }
 
-    async create(user: User): Promise<UserDto>{
+    async create(user: User): Promise<User>{
         const savedUser: User = await this._userRepository.save(user);
-        return this._mapperService.map<User, UserDto>(savedUser, new UserDto());
+        return savedUser;
     }
 
     async update (id: number, user:User): Promise<void> {
