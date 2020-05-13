@@ -12,6 +12,9 @@ export class User {
 
     @Column({type: 'varchar', nullable: false})
     password: string;
+    
+    @Column({type: 'varchar', nullable: false})
+    email: string;
 
     @ManyToOne(type => StateUserEntity)
     stateUser: StateUserEntity;
@@ -20,8 +23,7 @@ export class User {
     @JoinTable( {name: 'user_roles'})
     roles: Role[];
 
-    constructor(userAndPassword:string){
-        this.username = userAndPassword;
-        this.password = userAndPassword;
-    }
+    constructor(){}
+
+   
 }
