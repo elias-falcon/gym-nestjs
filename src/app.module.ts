@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { Configuration } from './config/config.keys';
@@ -11,13 +9,10 @@ import { UserModule } from './modules/user/user.module';
 import { StateUserEntityModule } from './modules/state-user-entity/state-user-entity.module';
 import { RoutineModule } from './modules/routine/routine.module';
 import { SexModule } from './modules/sex/sex.module';
-import { SharedModule } from './shared/shared.module';
 import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
-  imports: [ConfigModule, DatabaseModule, CustomerModule, RoleModule, UserModule, StateUserEntityModule, RoutineModule, SexModule, SharedModule, AuthModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [ConfigModule, DatabaseModule, CustomerModule, RoleModule, UserModule, StateUserEntityModule, RoutineModule, SexModule, AuthModule],
 })
 export class AppModule {
   static port: number | string;
