@@ -5,8 +5,10 @@ import { UserDto } from './dto/user.dto';
 import { StateUserEntityRepository } from '../state-user-entity/state-user-entity.respository';
 import { StateUserEntity } from '../state-user-entity/state-user-entity.entity';
 import { User } from './user.entity';
-import { MapperService } from '../../shared/mapper.service';
 import { RoleRepository } from '../role/role.repository';
+import { status } from '../../shared/entity-status.enum'
+import { Role } from '../role/role.entity';
+import { RoleType } from '../role/roletype.enum';
 
 @Injectable()
 export class UserService {
@@ -17,15 +19,14 @@ export class UserService {
         private readonly _stateUserEntityRepository: StateUserEntityRepository,
         @InjectRepository(RoleRepository)
         private readonly _roleRepository: RoleRepository,
-        private readonly _mapperService: MapperService,
     ){}
 
-    async get(id: number): Promise<UserDto>{
+    async get(id: number): Promise<User>{
         if(!id){
             throw new BadRequestException('id must be sent')
         }
 
-        const stateUserActive: StateUserEntity = await this._stateUserEntityRepository.findOne({where: { nameStateUser: 'ACTIVE' }});
+        const stateUserActive: StateUserEntity = await this._stateUserEntityRepository.findOne({where: { nameStateUser: status.ACTIVE }});
 
         const user: User = await this._userRepository.findOne(id, {
             where: { stateUser: stateUserActive }});
@@ -34,21 +35,26 @@ export class UserService {
             throw new NotFoundException();
         }
 
-        return this._mapperService.map<User,UserDto> (user, new UserDto());
+        return user;
     }
 
-    async getAll(): Promise<UserDto[]>{
-        const stateUserActive: StateUserEntity = await this._stateUserEntityRepository.findOne({where: { nameStateUser: 'ACTIVE' }});
+    async getAll(): Promise<User[]>{
+        const stateUserActive: StateUserEntity = await this._stateUserEntityRepository.findOne({where: { nameStateUser: status.ACTIVE }});
 
         const users: User[] = await this._userRepository.find({
             where: { stateUser: stateUserActive }});
 
-        return this._mapperService.mapCollection<User,UserDto> (users, new UserDto());
+        return users;
     }
 
-    async create(user: User): Promise<UserDto>{
-        const savedUser: User = await this._userRepository.save(user);
-        return this._mapperService.map<User, UserDto>(savedUser, new UserDto());
+    async create(user: User): Promise<User>{
+        const roleDefault: Role = await this._roleRepository.findOne({
+            where: {nameRole: RoleType.CUSTOMER}
+        })
+        const savedUser: User = user;
+        savedUser.roles.push(roleDefault);
+        await this._userRepository.save(user);
+        return savedUser;
     }
 
     async update (id: number, user:User): Promise<void> {
@@ -56,16 +62,37 @@ export class UserService {
     }
 
     async delete(id: number): Promise<void>{
-        const stateUserActive: StateUserEntity = await this._stateUserEntityRepository.findOne({where: { nameStateUser: 'ACTIVE' }});
-        const userExists = await this._userRepository.findOne(id, {
+        const stateUserActive: StateUserEntity = await this._stateUserEntityRepository.findOne({where: { nameStateUser: status.ACTIVE }});
+        const userExist = await this._userRepository.findOne(id, {
             where: {stateUser: stateUserActive }
         });
 
-        if(!userExists){
+        if(!userExist){
             throw new NotFoundException();
         }
 
-        const stateUserInactive: StateUserEntity = await this._stateUserEntityRepository.findOne({where: { nameStateUser: 'INACTIVE' }});
+        const stateUserInactive: StateUserEntity = await this._stateUserEntityRepository.findOne({where: { nameStateUser: status.INACTIVE }});
         await this._userRepository.update(id, { stateUser: stateUserInactive });
+    }
+
+    async setRoleToUser(userId: number, roleId: number){
+        const stateUserActive: StateUserEntity = await this._stateUserEntityRepository.findOne({where: { nameStateUser: status.ACTIVE }});
+        const userExist = await this._userRepository.findOne(userId, {
+            where: {stateUser: stateUserActive }
+        });
+
+        if(!userExist){
+            throw new NotFoundException();
+        }
+
+        const roleExist = await this._roleRepository.findOne(roleId);
+
+        if(!roleExist){
+            throw new NotFoundException('Role does not exist');
+        }
+
+        userExist.roles.push(roleExist);
+        await this._userRepository.save(userExist);
+        return true;
     }
 }
