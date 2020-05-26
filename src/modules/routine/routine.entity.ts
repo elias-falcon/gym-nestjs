@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from "typeorm";
-import { Sex } from "../sex/sex.entity";
 
 @Entity('routines')
 export class Routine {
