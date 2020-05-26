@@ -11,7 +11,7 @@ import { RoutineModule } from './modules/routine/routine.module';
 import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
-  imports: [ConfigModule, DatabaseModule, CustomerModule, RoleModule, UserModule, StateUserEntityModule, RoutineModule, SexModule, AuthModule],
+  imports: [ConfigModule, DatabaseModule, CustomerModule, RoleModule, UserModule, StateUserEntityModule, RoutineModule, AuthModule],
 })
 export class AppModule {
   static port: number | string;
