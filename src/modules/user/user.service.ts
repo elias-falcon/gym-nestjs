@@ -1,14 +1,13 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserDto } from './dto/user.dto';
 import { StateUserEntityRepository } from '../state-user-entity/state-user-entity.respository';
 import { StateUserEntity } from '../state-user-entity/state-user-entity.entity';
 import { User } from './user.entity';
 import { RoleRepository } from '../role/role.repository';
 import { status } from '../../shared/entity-status.enum'
-import { Role } from '../role/role.entity';
-import { RoleType } from '../role/roletype.enum';
+import { ReadUserDto, ReadUserDetailsDto, UpdateUserDto } from './dto';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class UserService {
@@ -21,7 +20,7 @@ export class UserService {
         private readonly _roleRepository: RoleRepository,
     ){}
 
-    async get(id: number): Promise<User>{
+    async get(id: number): Promise<ReadUserDto>{
         if(!id){
             throw new BadRequestException('id must be sent')
         }
@@ -35,35 +34,38 @@ export class UserService {
             throw new NotFoundException();
         }
 
-        return user;
+        return plainToClass(ReadUserDto, user);
     }
 
-    async getAll(): Promise<User[]>{
+    async getAll(): Promise<ReadUserDto[]>{
         const stateUserActive: StateUserEntity = await this._stateUserEntityRepository.findOne({where: { nameStateUser: status.ACTIVE }});
 
         const users: User[] = await this._userRepository.find({
             where: { stateUser: stateUserActive }});
 
-        return users;
+        return users.map((user: User) => plainToClass(ReadUserDto, user) );
     }
 
-    async create(user: User): Promise<User>{
-        const roleDefault: Role = await this._roleRepository.findOne({
-            where: {nameRole: RoleType.CUSTOMER}
-        })
-        const savedUser: User = user;
-        savedUser.roles.push(roleDefault);
-        await this._userRepository.save(user);
-        return savedUser;
-    }
 
-    async update (id: number, user:User): Promise<void> {
-        await this._userRepository.update(id, user);
-    }
-
-    async delete(id: number): Promise<void>{
+    async update (userId: number, user: UpdateUserDto): Promise<ReadUserDto> {
         const stateUserActive: StateUserEntity = await this._stateUserEntityRepository.findOne({where: { nameStateUser: status.ACTIVE }});
-        const userExist = await this._userRepository.findOne(id, {
+
+        const foundUser: User = await this._userRepository.findOne(userId, {
+            where: {stateUser: stateUserActive } 
+        });
+
+        if (!foundUser){
+            throw new NotFoundException('User does not exists');
+        }
+        foundUser.username = user.username;
+        const updateUser = await this._userRepository.save(foundUser);
+        return plainToClass(ReadUserDto, updateUser);
+        
+    }
+
+    async delete(userId: number): Promise<void>{
+        const stateUserActive: StateUserEntity = await this._stateUserEntityRepository.findOne({where: { nameStateUser: status.ACTIVE }});
+        const userExist = await this._userRepository.findOne(userId, {
             where: {stateUser: stateUserActive }
         });
 
@@ -72,17 +74,17 @@ export class UserService {
         }
 
         const stateUserInactive: StateUserEntity = await this._stateUserEntityRepository.findOne({where: { nameStateUser: status.INACTIVE }});
-        await this._userRepository.update(id, { stateUser: stateUserInactive });
+        await this._userRepository.update(userId, { stateUser: stateUserInactive });
     }
 
-    async setRoleToUser(userId: number, roleId: number){
+    async setRoleToUser(userId: number, roleId: number): Promise<boolean>{
         const stateUserActive: StateUserEntity = await this._stateUserEntityRepository.findOne({where: { nameStateUser: status.ACTIVE }});
         const userExist = await this._userRepository.findOne(userId, {
             where: {stateUser: stateUserActive }
         });
 
         if(!userExist){
-            throw new NotFoundException();
+            throw new NotFoundException('The user does not exists');
         }
 
         const roleExist = await this._roleRepository.findOne(roleId);

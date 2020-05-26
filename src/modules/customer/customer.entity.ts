@@ -25,6 +25,9 @@ export class Customer {
     @Column({ type: 'varchar', nullable: false })
     address: string;
 
+    @Column({ type: 'varchar', nullable: false })
+    sexMale: boolean;
+
     @OneToOne(type => User)
     @JoinColumn()
     user: User;

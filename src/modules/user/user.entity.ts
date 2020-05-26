@@ -13,10 +13,11 @@ export class User {
     @Column({type: 'varchar', nullable: false})
     password: string;
     
-    @Column({type: 'varchar', nullable: false})
+    @Column({type: 'varchar', unique: true, nullable: true})
     email: string;
 
     @ManyToOne(type => StateUserEntity)
+    @JoinColumn()
     stateUser: StateUserEntity;
 
     @ManyToMany(type => Role, role => role.users, { eager: true})

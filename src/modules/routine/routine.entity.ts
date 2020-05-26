@@ -12,8 +12,8 @@ export class Routine {
     @Column({ type: 'varchar', length: 25, nullable: false })
     descriptionRoutine: string;
 
-    @ManyToOne(type => Sex)
-    sex: Sex;
+    @Column({ type: 'varchar', nullable: false })
+    sexMale: boolean;
 
     @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
     createdAt: Date;

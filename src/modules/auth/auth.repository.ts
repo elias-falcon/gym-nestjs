@@ -7,6 +7,9 @@ import { RoleType } from "../role/roletype.enum";
 import { genSalt, hash } from "bcryptjs";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserRepository } from "../user/user.repository";
+import { StateUserEntity } from "../state-user-entity/state-user-entity.entity";
+import { StateUserEntityRepository } from "../state-user-entity/state-user-entity.respository";
+import { status } from '../../shared/entity-status.enum'
 
 @EntityRepository(User)
 export class AuthRepository extends Repository<User>{
@@ -23,11 +26,14 @@ export class AuthRepository extends Repository<User>{
         const user = new User();
         user.username = username;
 
-        const roleRepository: RoleRepository = await getConnection().getRepository(Role);
+        const _roleRepository: RoleRepository = await getConnection().getRepository(Role);
+        const _stateUserRepository: StateUserEntityRepository = await getConnection().getRepository(StateUserEntity);
 
-        const defaultRole: Role = await roleRepository.findOne( { where: { nameRole: RoleType.CUSTOMER } });
+        const defaultRole: Role = await _roleRepository.findOne( { where: { nameRole: RoleType.CUSTOMER } });
+        const defaultStateUser: StateUserEntity = await _stateUserRepository.findOne({ where: {nameStateUser: status.ACTIVE}})
 
         user.roles = [defaultRole];
+        user.stateUser = defaultStateUser;
         
         const salt = await genSalt(10);
         user.password = await hash(password, salt);
