@@ -20,5 +20,4 @@ export class Routine {
     @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
     updatedAt: Date;
 
-
 }
