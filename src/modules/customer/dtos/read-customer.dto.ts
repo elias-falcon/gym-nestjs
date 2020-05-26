@@ -1,5 +1,7 @@
 import { IsString, MaxLength, IsNumber } from "class-validator";
 import { ReadCustomerRoutinesDto } from "./customer-routines.dto"
+import { Type } from "class-transformer";
+
 
 export class ReadCustomerDto {
     @IsNumber()
@@ -31,6 +33,6 @@ export class ReadCustomerDto {
     address: string;
 
     @Type(type => ReadCustomerRoutinesDto)
-    readonly routines: ReadCustomerRoutinesDto
+    readonly routine: ReadCustomerRoutinesDto
 
 }

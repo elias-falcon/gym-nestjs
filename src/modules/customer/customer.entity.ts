@@ -8,7 +8,10 @@ export class Customer {
     id: number;
 
     @Column({ type: 'varchar', length: 25, nullable: false })
-    name: string;
+    nameCustomer: string;
+
+    @Column({ type: 'varchar', length: 25, nullable: false })
+    surnameCustomer: string;
 
     @Column({ type: 'int', unique: true, nullable: false })
     dni: number;
