@@ -13,5 +13,5 @@ export class ReadUserDto {
     readonly username: string;
 
     @Type(type => ReadUserDetailsDto)
-    readonly details: ReadUserDetailsDto
+    readonly customer: ReadUserDetailsDto
 }

@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToOne, ManyToMany, JoinTable } from "typeorm";
 import { Role } from "../role/role.entity";
 import { StateUserEntity } from "../state-user-entity/state-user-entity.entity";
+import { Customer } from "../customer/customer.entity";
 
 @Entity('users')
 export class User {
@@ -23,6 +24,10 @@ export class User {
     @ManyToMany(type => Role, role => role.users, { eager: true})
     @JoinTable( {name: 'user_roles'})
     roles: Role[];
+
+    @OneToOne(type => Customer)
+    @JoinColumn()
+    customer: Customer;
 
     constructor(){}
 

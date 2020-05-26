@@ -5,11 +5,11 @@ import { Expose, Exclude } from "class-transformer";
 export class ReadUserDetailsDto {
     @Expose()
     @IsString()
-    readonly name: string;
+    readonly nameCustomer: string;
 
     @Expose()
     @IsString()
-    readonly surname: string;
+    readonly surnameCustomer: string;
 
     @Expose()
     @IsNumber()
