@@ -8,7 +8,6 @@ import { RoleModule } from './modules/role/role.module';
 import { UserModule } from './modules/user/user.module';
 import { StateUserEntityModule } from './modules/state-user-entity/state-user-entity.module';
 import { RoutineModule } from './modules/routine/routine.module';
-import { SexModule } from './modules/sex/sex.module';
 import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
