@@ -16,21 +16,21 @@ export class ReadCustomerDto {
     readonly surnameCustomer: string;
 
     @IsNumber()
-    dni: number;
+    readonly dni: number;
 
     @IsNumber()
-    years: number;
+    readonly years: number;
 
     @IsString()
     @MaxLength(25, {message: 'This email is not valid, its too large.'})
-    email: string;
+    readonly  email: string;
 
     @IsNumber()
-    mobilePhone: number;
+    readonly  mobilePhone: number;
 
     @IsString()
     @MaxLength(100, {message: 'This address is not valid, its too large.'})
-    address: string;
+    readonly  address: string;
 
     @Type(type => ReadCustomerRoutinesDto)
     readonly routine: ReadCustomerRoutinesDto
