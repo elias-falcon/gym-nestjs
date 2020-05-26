@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { StateUserEntityService } from './state-user-entity.service';
+import { StateUserEntityService } from '../state-user-entity.service';
 
 describe('StateUserEntityService', () => {
   let service: StateUserEntityService;
