@@ -60,7 +60,6 @@ export class CustomerServiceService {
         if (!foundCustomer){
             throw new NotFoundException('Customer does not exists');
         }
-        foundCustomer.email = customer.email;
         foundCustomer.mobilePhone = customer.mobilePhone;
         foundCustomer.address = customer.address;
         const updateCustomer = await this._customerRepository.save(foundCustomer);

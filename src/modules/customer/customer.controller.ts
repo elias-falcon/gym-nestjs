@@ -5,7 +5,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { Roles } from '../role/decorator/role.decorator';
 import { RoleType } from '../role/roletype.enum';
 import { RoleGuard } from '../role/guards/role.guard';
-import { UserRepository } from '../user/user.repository';
 
 @Controller('customer')
 export class CustomerController {
