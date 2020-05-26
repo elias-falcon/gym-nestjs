@@ -7,7 +7,6 @@ import { ReadCustomerDto, UpdateCustomerDto } from './dtos';
 import { status } from '../../shared/entity-status.enum'
 import { plainToClass } from 'class-transformer';
 import { CustomerRepository } from './customer.repository';
-import { User } from '../user/user.entity';
 import { UserRepository } from '../user/user.repository';
 
 @Injectable()
@@ -64,7 +63,6 @@ export class CustomerServiceService {
         }
 
         const stateUserInactive: StateUserEntity = await this._stateUserEntityRepository.findOne({where: { nameStateUser: status.INACTIVE }});
-        const userCustomer: User = await this._userRepository.findOne(customerExist.user.id);
         await this._userRepository.update(customerExist.user.id, { stateUser: stateUserInactive });
     }
 
