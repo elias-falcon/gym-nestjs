@@ -22,7 +22,7 @@ export class Customer {
     @Column({ type: 'varchar', nullable: false })
     email: string;
 
-    @Column({ type: 'int', nullable: false })
+    @Column({ type: 'int', nullable: true })
     mobilePhone: number;
 
     @Column({ type: 'varchar', nullable: false })

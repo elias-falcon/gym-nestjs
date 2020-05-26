@@ -1,9 +1,9 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable,ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Customer } from './customer.entity';
 import { StateUserEntityRepository } from '../state-user-entity/state-user-entity.respository';
 import { StateUserEntity } from '../state-user-entity/state-user-entity.entity'
-import { ReadCustomerDto, UpdateCustomerDto } from './dtos';
+import { ReadCustomerDto, UpdateCustomerDto, CreateCustomerDto } from './dtos';
 import { status } from '../../shared/entity-status.enum'
 import { plainToClass } from 'class-transformer';
 import { CustomerRepository } from './customer.repository';
@@ -20,6 +20,18 @@ export class CustomerServiceService {
         @InjectRepository(UserRepository)
         private readonly _userRepository: UserRepository,
     ){}
+
+    
+    async create (customer: CreateCustomerDto): Promise<ReadCustomerDto> {
+
+        const customerExist = await this._customerRepository.find({ where: {dni: customer.dni}});
+        if (!customerExist){
+            throw new ConflictException("Dni already exists");
+        }
+        const createCustomer: Customer = await this._customerRepository.save(customer);
+
+        return plainToClass(ReadCustomerDto, createCustomer);
+    }
 
     async get(id: number): Promise<ReadCustomerDto>{
         if(!id){
@@ -41,7 +53,7 @@ export class CustomerServiceService {
     }
 
 
-    async update (customerId: number, customer: UpdateCustomerDto): Promise<ReadCustomerDto> {
+    async update (customerId: number, customer: Partial<UpdateCustomerDto>): Promise<ReadCustomerDto> {
 
         const foundCustomer: Customer = await this._customerRepository.findOne(customerId);
 
@@ -54,6 +66,7 @@ export class CustomerServiceService {
         const updateCustomer = await this._customerRepository.save(foundCustomer);
         return plainToClass(ReadCustomerDto, updateCustomer);
     }
+
 
     async delete(customerId: number): Promise<void>{
         const customerExist = await this._customerRepository.findOne(customerId);
