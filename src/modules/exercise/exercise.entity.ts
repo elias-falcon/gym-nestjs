@@ -16,7 +16,7 @@ export class Exercise {
     linkToVideo: string;
 
     @Column({ type : 'text', nullable: false })
-    gif: string;
+    gif: File;
 
     @ManyToOne(type => Routine)
     routine: Routine;

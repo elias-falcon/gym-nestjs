@@ -16,5 +16,5 @@ export class UpdateExcerciseDto {
 
     @IsString()
     @MaxLength(100, {message: 'This gif is not valid, its too large.'})
-    readonly gif: string;
+    readonly gif: File;
 }

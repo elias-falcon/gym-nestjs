@@ -1,64 +1,34 @@
-import { BadRequestException, NotFoundException, Controller } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { plainToClass } from 'class-transformer';
-import { Exercise } from './exercise.entity';
-import { ExerciseRepository } from './exercise.repository';
+import { Controller, Get, Param, Post, Body, Patch, Delete, ParseIntPipe } from '@nestjs/common';
+import { ExerciseService } from './exercise.service';
 import { ReadExcerciseDto, CreateExcerciseDto, UpdateExcerciseDto } from './dtos';
+
 
 @Controller('exercise')
 export class ExerciseController {
-
-        constructor(
-            @InjectRepository(Exercise)
-            private readonly _excerciseRepository: ExerciseRepository,
-        ){}
-    
-        async get(id: number): Promise<ReadExcerciseDto>{
-            if(!id){
-                throw new BadRequestException('id must be sent')
+            constructor(private readonly _exerciseService: ExerciseService){}
+        
+            @Get(':exerciseId')
+            async getExercise(@Param('exerciseId', ParseIntPipe) exerciseId: number): Promise<ReadExcerciseDto>{
+                return this._exerciseService.get(exerciseId);
             }
-    
-            const exercise: Exercise = await this._excerciseRepository.findOne(id);
-    
-            if (!exercise){
-                throw new NotFoundException();
+        
+            @Get()
+            async getExercises(): Promise<ReadExcerciseDto[]>{
+                return this._exerciseService.getAll();
             }
-    
-            return plainToClass(ReadExcerciseDto, exercise);
-        }
-    
-        async getAll(): Promise<ReadExcerciseDto[]>{
-            const exercises: Exercise[] = await this._excerciseRepository.find();
-            return exercises.map((exercise: Exercise) => plainToClass(ReadExcerciseDto, exercise));
-        }
-    
-        async create(exercise: Partial<CreateExcerciseDto>): Promise<ReadExcerciseDto>{
-            const saveExercise: Exercise = await this._excerciseRepository.save(exercise);
-            return plainToClass(ReadExcerciseDto, saveExercise);
-        }
-    
-        async update (exerciseId: number, exercise: Partial<UpdateExcerciseDto>): Promise<ReadExcerciseDto> {
-            const foundExercise: Exercise = await this._excerciseRepository.findOne(exerciseId);
-    
-            if(!foundExercise){
-                throw new NotFoundException('This exercise does nt exist');
+        
+            @Post()
+            createExercise (@Body() routine: Partial<CreateExcerciseDto> ): Promise<ReadExcerciseDto>{
+                return this._exerciseService.create(routine);
             }
-    
-            foundExercise.nameExcercise = exercise.nameExcercise;
-            foundExercise.descriptionExcercise = exercise.descriptionExcercise;
-            foundExercise.linkToVideo = exercise.linkToVideo;
-            foundExercise.gif = exercise.gif;
-    
-            const updateExercise: Exercise = await this._excerciseRepository.save(foundExercise);
-    
-            return plainToClass(ReadExcerciseDto, updateExercise);
-        }
-    
-        async delete(id: number): Promise<void>{
-            const exerciseExist = await this._excerciseRepository.findOne(id);
-            if(!exerciseExist){
-                throw new NotFoundException();
+        
+            @Patch(':exerciseId')
+             updateExercise (@Param('exerciseId', ParseIntPipe) exerciseId: number, @Body() exercise: Partial<UpdateExcerciseDto> ){
+                return this._exerciseService.update(exerciseId, exercise);
             }
-            await this._excerciseRepository.delete(id);
-        }
+        
+            @Delete(':exerciseId')
+             deleteExercise(@Param('exerciseId', ParseIntPipe) exerciseId: number){
+                return this._exerciseService.delete(exerciseId);
+             }
 }
