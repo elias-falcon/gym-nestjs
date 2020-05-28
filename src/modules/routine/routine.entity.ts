@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, ManyToMany, OneToMany } from "typeorm";
-import { Excercise } from "../exercise/excercise.entity";
+import { Exercise } from "../exercise/exercise.entity";
 
 @Entity('routines')
 export class Routine {
@@ -15,8 +15,8 @@ export class Routine {
     @Column({ type: 'varchar', nullable: false })
     sexMale: boolean;
 
-    @OneToMany(type => Excercise, excercise => excercise.routine)
-    excercises: Excercise[];
+    @OneToMany(type => Exercise, exercise => exercise.routine)
+    excercises: Exercise[];
 
     @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
     createdAt: Date;

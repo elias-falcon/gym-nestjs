@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm";
 import { Routine } from "../routine/routine.entity";
 
-@Entity('excercises')
-export class Excercise {
+@Entity('exercises')
+export class Exercise {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -26,6 +26,5 @@ export class Excercise {
 
     @UpdateDateColumn({type: 'timestamp', name: 'updated_at'})
     updatedAt: Date;
-
 
 }
