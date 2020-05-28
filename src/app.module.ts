@@ -10,9 +10,11 @@ import { StateUserEntityModule } from './modules/state-user-entity/state-user-en
 import { RoutineModule } from './modules/routine/routine.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ExerciseModule } from './modules/exercise/exercise.module';
+import { ExcerciseController } from './modules/excercise/excercise.controller';
 
 @Module({
   imports: [ConfigModule, DatabaseModule, CustomerModule, RoleModule, UserModule, StateUserEntityModule, RoutineModule, AuthModule, ExerciseModule],
+  controllers: [ExcerciseController],
 })
 export class AppModule {
   static port: number | string;
