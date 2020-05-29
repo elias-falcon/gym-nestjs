@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { plainToClass } from 'class-transformer';
 import { Exercise } from './exercise.entity';
 import { ExerciseRepository } from './exercise.repository';
-import { ReadExcerciseDto, CreateExcerciseDto, UpdateExcerciseDto } from './dtos';
+import { ReadExerciseDto, CreateExerciseDto, UpdateExerciseDto } from './dtos';
 
 @Injectable()
 export class ExerciseService {
@@ -13,7 +13,7 @@ export class ExerciseService {
                 private readonly _excerciseRepository: ExerciseRepository,
             ){}
         
-            async get(id: number): Promise<ReadExcerciseDto>{
+            async get(id: number): Promise<ReadExerciseDto>{
                 if(!id){
                     throw new BadRequestException('id must be sent')
                 }
@@ -24,34 +24,40 @@ export class ExerciseService {
                     throw new NotFoundException();
                 }
         
-                return plainToClass(ReadExcerciseDto, exercise);
+                return plainToClass(ReadExerciseDto, exercise);
             }
         
-            async getAll(): Promise<ReadExcerciseDto[]>{
+            async getAll(): Promise<ReadExerciseDto[]>{
                 const exercises: Exercise[] = await this._excerciseRepository.find();
-                return exercises.map((exercise: Exercise) => plainToClass(ReadExcerciseDto, exercise));
+                return exercises.map((exercise: Exercise) => plainToClass(ReadExerciseDto, exercise));
             }
         
-            async create(exercise: Partial<CreateExcerciseDto>): Promise<ReadExcerciseDto>{
-                const saveExercise: Exercise = await this._excerciseRepository.save(exercise);
-                return plainToClass(ReadExcerciseDto, saveExercise);
+            async create(exercise: Partial<CreateExerciseDto>, pathFile: string): Promise<ReadExerciseDto>{
+                exercise.gif = pathFile;
+                const savedExercise: Exercise = await this._excerciseRepository.save(exercise);
+                return plainToClass(ReadExerciseDto, savedExercise);
             }
         
-            async update (exerciseId: number, exercise: Partial<UpdateExcerciseDto>): Promise<ReadExcerciseDto> {
+            async update (exerciseId: number, exercise: Partial<UpdateExerciseDto>, filePath: string): Promise<ReadExerciseDto> {
                 const foundExercise: Exercise = await this._excerciseRepository.findOne(exerciseId);
         
                 if(!foundExercise){
                     throw new NotFoundException('This exercise does nt exist');
                 }
+                var fs = require('fs');
+                var filePathToDelete = foundExercise.gif;
+                fs.unlink(filePathToDelete, function(err) {
+                    if (err) throw err;
+                  });
         
-                foundExercise.nameExcercise = exercise.nameExcercise;
-                foundExercise.descriptionExcercise = exercise.descriptionExcercise;
+                foundExercise.nameExercise = exercise.nameExercise;
+                foundExercise.descriptionExercise = exercise.descriptionExercise;
                 foundExercise.linkToVideo = exercise.linkToVideo;
-                foundExercise.gif = exercise.gif;
+                foundExercise.gif = filePath;
         
                 const updateExercise: Exercise = await this._excerciseRepository.save(foundExercise);
         
-                return plainToClass(ReadExcerciseDto, updateExercise);
+                return plainToClass(ReadExerciseDto, updateExercise);
             }
         
             async delete(id: number): Promise<void>{

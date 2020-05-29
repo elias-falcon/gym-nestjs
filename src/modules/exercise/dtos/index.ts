@@ -1,3 +1,3 @@
-export { CreateExcerciseDto } from './create-excercise.dto';
-export { ReadExcerciseDto } from './read-excercise.dto';
-export { UpdateExcerciseDto } from './update-excercise.dto';
+export { CreateExerciseDto } from './create-excercise.dto';
+export { ReadExerciseDto } from './read-excercise.dto';
+export { UpdateExerciseDto } from './update-excercise.dto';

@@ -26,6 +26,11 @@ export class RoutineController {
          updateRoutine (@Param('routineId', ParseIntPipe) routineId: number, @Body() routine: Partial<UpdateRoutineDto> ){
             return this._routineService.update(routineId, routine);
         }
+
+        @Patch(':routineId/:exerciseId')
+         addExerciseRoutine (@Param('routineId', ParseIntPipe) routineId: number, @Param('exerciseId', ParseIntPipe) exerciseId: number, ){
+            return this._routineService.addExercise(routineId, exerciseId);
+        }
     
         @Delete(':routineId')
          deleteRoutine(@Param('routineId', ParseIntPipe) routineId: number){

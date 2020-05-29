@@ -7,16 +7,16 @@ export class Exercise {
     id: number;
 
     @Column({ type : 'varchar', length: 20, nullable: false })
-    nameExcercise: string;
+    nameExercise: string;
 
     @Column({ type : 'text', nullable: false })
-    descriptionExcercise: string;
+    descriptionExercise: string;
 
     @Column({ type : 'text', nullable: false })
     linkToVideo: string;
 
     @Column({ type : 'text', nullable: false })
-    gif: File;
+    gif: string;
 
     @ManyToOne(type => Routine)
     routine: Routine;

@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RoutineRepository } from './routine.repository';
 import { ReadRoutineDto, CreateRoutineDto, UpdateRoutineDto } from './dtos';
 import { Routine } from './routine.entity';
+import { ExerciseRepository } from '../exercise/exercise.repository';
 
 @Injectable()
 export class RoutineService {
@@ -11,6 +12,8 @@ export class RoutineService {
         constructor(
             @InjectRepository(RoutineRepository)
             private readonly _routineRepository: RoutineRepository,
+            @InjectRepository(ExerciseRepository)
+            private readonly _exerciseRepository: ExerciseRepository,
         ){}
     
         async get(id: number): Promise<ReadRoutineDto>{
@@ -59,6 +62,16 @@ export class RoutineService {
                 throw new NotFoundException();
             }
             await this._routineRepository.delete(id);
+        }
+
+        async addExercise(exerciseId: number, routineId: number): Promise<void>{
+            const exerciseExist = await this._exerciseRepository.findOne(exerciseId);
+            const routineExist = await this._routineRepository.findOne(routineId);
+            if(!routineExist || !exerciseId){
+                throw new NotFoundException();
+            }
+            routineExist.excercises.push(exerciseExist);
+            await this._routineRepository.save(routineExist);
         }
 
 }

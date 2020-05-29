@@ -1,19 +1,19 @@
 import { IsString, MaxLength } from "class-validator";
 
-export class CreateExcerciseDto {
+export class CreateExerciseDto {
     @IsString()
     @MaxLength(50, {message: 'This name is not valid, its too large.'})
-    readonly nameExcercise: string;
+     nameExercise: string;
 
     @IsString()
     @MaxLength(100, {message: 'This description is not valid, its too large.'})
-    readonly descriptionExcercise: string;
+     descriptionExercise: string;
 
     @IsString()
     @MaxLength(100, {message: 'This link is not valid, its too large.'})
-    readonly linkToVideo: string;
+     linkToVideo: string;
 
     @IsString()
     @MaxLength(100, {message: 'This gif is not valid, its too large.'})
-    readonly gif: File;
+    gif: string;
 }
